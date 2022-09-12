@@ -1,9 +1,11 @@
-0000 0000
-lda imm
-ldb imm
-j imm
-jne imm
-add x
-addi imm
-sta imm
+lda     0001
+sta     0010
+ldb     0011
+stb     0100
+add     0101
+sub     0110
+j       0111
+jne     1000
+hlt     1001
+out     1111
 
