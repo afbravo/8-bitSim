@@ -1,0 +1,9 @@
+0000 0000
+lda imm
+ldb imm
+j imm
+jne imm
+add x
+addi imm
+sta imm
+
