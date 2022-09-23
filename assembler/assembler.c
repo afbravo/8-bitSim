@@ -12,7 +12,7 @@
 #define MEMORY_SIZE 16
 
 void processArgs(int argc, char **argv, char **inputFile, char **outputFile);
-void openFile(FILE *file, char *fileName);
+void openFile(FILE **file, char *fileName);
 char *compile(FILE *file);
 int save_file(char *fileName, char *data);
 unsigned char translate(const char *instruction);
@@ -57,29 +57,36 @@ void processArgs(int argc, char **argv, char **inputFile, char **outputFile)
     }
 }
 
-void openFile(FILE *file, char *fileName)
+unsigned char *assemble(char *fileName)
 {
-    file = fopen(fileName, "r");
+    FILE *file = fopen(fileName, "r");
+    
     if (file == NULL)
     {
         printf("Error opening file\n");
         exit(1);
     }
-}
 
-char *assemble(FILE *file)
-{
-    char *binary = malloc(MEMORY_SIZE * sizeof(char));
-    size_t index = 0;
+    // char *binary = malloc(MEMORY_SIZE * sizeof(char));
+    // char *binary;
+    unsigned char *binary = (unsigned char *)malloc(MEMORY_SIZE * sizeof(unsigned char));
+    int *index = (int *)malloc(sizeof(int));
+    *index = 0;
     char instruction[3];
-    int *number;
-    unsigned char byte;
-    while (fscanf(file, "%s %d", instruction, number) == 2)
+    int number;
+    while (feof(file) == 0 && *index < MEMORY_SIZE)
     {
-        byte = translate(instruction) | *number;
-        binary[index] = byte;
-        index++;
+        printf("index: %d\n", *index);
+        fscanf(file, "%s %d", instruction, &number);
+        printf("index: %d\n", *index);
+        number &= 0xFF;
+        binary[*index] = translate(instruction) | number;
+        printf("%d\n", binary[*index]);
+        (*index)++;
     }
+
+    printf("----------\n");
+
     return binary;
 }
 
@@ -135,14 +142,7 @@ unsigned char translate(const char *instruction)
     }
 }
 
-// print current binary
-void print_binary(char *binary)
-{
-    for (int i = 0; i < MEMORY_SIZE; i++)
-    {
-        printf("%d\n", binary[i]);
-    }
-}
+
 
 int main(int argc, char **argv)
 {
@@ -157,14 +157,14 @@ int main(int argc, char **argv)
     processArgs(argc, argv, &inputFileName, &outputFileName);
 
     // open file
-    
-    openFile(fptr, inputFileName);
-
     // compile file to binary
-    char *binary = assemble(fptr);
+    unsigned char *binary = assemble(inputFileName);
 
     // print binary
-    print_binary(binary);
+    for (int i = 0; i < MEMORY_SIZE; i++)
+    {
+        printf("%d\n", binary[i]);
+    }
 
     // save binary file
     // save_file(outputFileName, binary);
