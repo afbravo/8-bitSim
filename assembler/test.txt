@@ -1,3 +1,0 @@
-add 5
-lda 13
-jmp 2
