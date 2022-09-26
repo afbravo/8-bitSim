@@ -101,6 +101,13 @@ unsigned char *assemble(char *fileName)
         It is assumed that the input file has the following format:
             instruction <space> operand
 
+        This is translated into a byte as follows:
+            first nibble (4 bits) for the instruction
+            second nibble (4 bits) for the operand
+
+        Example:
+            add 5 : 00100101
+
         Arguments:
             fileName : name of the input file
         Returns:
@@ -137,7 +144,8 @@ unsigned char *assemble(char *fileName)
 unsigned char translate(const char *instruction)
 {
     /*
-        Function translates the instruction into binary. The binary is then returned.
+        Function translates the instruction into binary. The binary return
+        is shifted left by 4 bits to make room for the operand.
 
         The following instruction have the following binary values:
             NOP : 0000
